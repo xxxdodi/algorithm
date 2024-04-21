@@ -1,31 +1,24 @@
 #include <iostream>
-#include <list>
+#include <queue>
 
 using namespace std;
 
-// Функция для печати списка
-void printList(const list<int>& myList) {
-    for (int elem : myList) {
-        cout << elem << " ";
+int main() {
+    // Создание пустой очереди целых чисел
+    queue<int> myQueue;
+
+    // Добавление элементов в очередь
+    myQueue.push(10);
+    myQueue.push(20);
+    myQueue.push(30);
+
+    // Печать элементов очереди
+    cout << "Элементы очереди: ";
+    while (!myQueue.empty()) {
+        cout << myQueue.front() << " "; // Выводим первый элемент
+        myQueue.pop(); // Удаляем первый элемент
     }
     cout << endl;
-}
-
-int main() {
-    // Начальное формирование списка
-    list<int> myList = {1, 2, 3, 4, 5};
-
-    // Печать начального списка
-    cout << "Начальный список: ";
-    printList(myList);
-
-    // Добавление элемента в конец списка
-    int newElement = 6;
-    myList.push_back(newElement);
-
-    // Печать списка после добавления элемента
-    cout << "Список после добавления элемента " << newElement << " в конец: ";
-    printList(myList);
 
     return 0;
 }
