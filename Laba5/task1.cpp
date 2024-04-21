@@ -1,58 +1,83 @@
 #include <iostream>
-#include <queue>
-#include <set>
+#include <vector>
 
 using namespace std;
 
-vector<int> generateNumbers(int n) {
-    if (n <= 0) return {};
-
-    vector<int> result;
-    queue<int> q2, q3, q5;
-    set<int> s;
-
-    q2.push(2);
-    q3.push(3);
-    q5.push(5);
-    s.insert(2);
-    s.insert(3);
-    s.insert(5);
-
-    while (n > 0) {
-        int next = min(q2.front(), min(q3.front(), q5.front()));
-        result.push_back(next);
-        if (next == q2.front()) {
-            q2.pop();
-            q2.push(next * 2);
-            q3.push(next * 3);
-            q5.push(next * 5);
-        } else if (next == q3.front()) {
-            q3.pop();
-            q3.push(next * 3);
-            q5.push(next * 5);
-        } else {
-            q5.pop();
-            q5.push(next * 5);
+// Функция для печати матрицы
+void printMatrix(const vector<vector<double>>& matrix) {
+    for (const auto& row : matrix) {
+        for (double elem : row) {
+            cout << elem << "\t";
         }
-        if (!s.count(next * 2)) {
-            s.insert(next * 2);
-            q2.push(next * 2);
-        }
-        n--;
+        cout << endl;
+    }
+}
+
+// Функция для выполнения элементарных преобразований над строками
+void rowOperation(vector<vector<double>>& matrix, int i, int j, double factor) {
+    int n = matrix[0].size();
+    for (int k = 0; k < n; ++k) {
+        matrix[i][k] -= factor * matrix[j][k];
+    }
+}
+
+// Функция для поиска обратной матрицы методом Гаусса
+vector<vector<double>> inverseMatrix(vector<vector<double>>& matrix) {
+    int n = matrix.size();
+    vector<vector<double>> inverse(n, vector<double>(n, 0));
+
+    // Инициализация обратной матрицы как единичной
+    for (int i = 0; i < n; ++i) {
+        inverse[i][i] = 1;
     }
 
-    return result;
+    // Прямой ход метода Гаусса
+    for (int i = 0; i < n; ++i) {
+        double pivot = matrix[i][i];
+        for (int j = i + 1; j < n; ++j) {
+            double factor = matrix[j][i] / pivot;
+            rowOperation(matrix, j, i, factor);
+            rowOperation(inverse, j, i, factor);
+        }
+    }
+
+    // Обратный ход метода Гаусса
+    for (int i = n - 1; i >= 0; --i) {
+        double pivot = matrix[i][i];
+        for (int j = i - 1; j >= 0; --j) {
+            double factor = matrix[j][i] / pivot;
+            rowOperation(matrix, j, i, factor);
+            rowOperation(inverse, j, i, factor);
+        }
+    }
+
+    // Нормализация строк обратной матрицы
+    for (int i = 0; i < n; ++i) {
+        double pivot = matrix[i][i];
+        for (int j = 0; j < n; ++j) {
+            inverse[i][j] /= pivot;
+        }
+    }
+
+    return inverse;
 }
 
 int main() {
-    int n;
-    cout << "Введите количество чисел для генерации: ";
-    cin >> n;
-    vector<int> numbers = generateNumbers(n);
-    cout << "Первые " << n << " натуральных чисел с простыми множителями 2, 3 и 5: ";
-    for (int num : numbers) {
-        cout << num << " ";
-    }
-    cout << endl;
+    // Пример входной матрицы
+    vector<vector<double>> matrix = {{2, 1, -1},
+                                      {0, -1, 2},
+                                      {1, 1, 1}};
+
+    // Печать входной матрицы
+    cout << "Входная матрица:" << endl;
+    printMatrix(matrix);
+
+    // Поиск обратной матрицы
+    vector<vector<double>> inverse = inverseMatrix(matrix);
+
+    // Печать обратной матрицы
+    cout << "Обратная матрица:" << endl;
+    printMatrix(inverse);
+
     return 0;
 }
